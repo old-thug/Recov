@@ -110,7 +110,7 @@ int main(int argc, char **argv)
      case MODE_Scan:
 	  int err = scanDrive(opt.scan.drive_name);
 	  if (err == RECOV_ERR_Ok) return 0;
-	  if (err != RECOV_ERR_No_Such_Drive)
+	  if (err == RECOV_ERR_No_Such_Drive)
 	  {
 	       errorExit(argv[0], "No such drive, `%s`", opt.scan.drive_name);
 	  }

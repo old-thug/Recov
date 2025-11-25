@@ -14,7 +14,7 @@ OBJECTS=$(patsubst $(SRC)/%.c, $(BIN)/%.obj, $(SOURCES))
 TARGET=recov.exe
 all=$(TARGET)
 
-FLAGS=-Wall -Wextra -Iinclude
+FLAGS=-Wall -Wextra -Iinclude -ggdb
 LD_FLAGS=-lSDL3 -lrecov -L. -Lbin
 
 $(TARGET): $(OBJECTS) $(LIB_RECOV)
