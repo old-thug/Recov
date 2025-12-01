@@ -1,0 +1,13 @@
+
+Language: C
+IndentWidth: 4	
+DerivePointerAlignment: false
+PointerAlignment: Right
+AlwaysBreakAfterReturnType: AllDefinitions
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: true
+  AfterStruct: true
+  SplitEmptyFunction: false
+  AfterControlStatement: true
+  AfterFunction: true
