@@ -26,12 +26,12 @@ UIFindHit(UIContainer *root, float mx, float my)
 }
 
 static void
-UIHandleMouse(UIContainer *root, SDL_Event *event)
+UIHandleMouse(UIContainer *root, SDL_Event *event, SDL_Renderer* renderer)
 {
     static UIBase *ui_pressed = NULL;
     static UIBase *ui_hovered = NULL;
     static UIBase *ui_focused = NULL;
-    
+    (void)ui_focused;
     switch (event->type)
     {
     case SDL_EVENT_MOUSE_MOTION: {
@@ -39,12 +39,12 @@ UIHandleMouse(UIContainer *root, SDL_Event *event)
         if (hit != ui_hovered)
         {
 	    if (ui_hovered && ui_hovered->on_mouse_exit)
-		ui_hovered->on_mouse_exit(ui_hovered);
+		ui_hovered->on_mouse_exit(ui_hovered, renderer);
 	    
 	    ui_hovered = hit;
 	    
 	    if (ui_hovered && ui_hovered->on_mouse_enter)
-		ui_hovered->on_mouse_enter(ui_hovered);
+		ui_hovered->on_mouse_enter(ui_hovered, renderer);
         }        
     }
     break;
@@ -69,7 +69,7 @@ UIHandleMouse(UIContainer *root, SDL_Event *event)
 	
         if (ui_pressed && ui_pressed == hit) {
             if (ui_pressed->on_mouse_click)
-                ui_pressed->on_mouse_click(ui_pressed);            
+                ui_pressed->on_mouse_click(ui_pressed, renderer);            
         }
 
         ui_pressed = NULL;
@@ -80,14 +80,14 @@ UIHandleMouse(UIContainer *root, SDL_Event *event)
 
 
 void
-UIHandleEvent(UIContainer *root, SDL_Event *event)
+UIHandleEvent(UIContainer *root, SDL_Event *event, SDL_Renderer* renderer)
 {
     switch (event->type)
     {
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
     case SDL_EVENT_MOUSE_BUTTON_UP:
     case SDL_EVENT_MOUSE_MOTION:
-        UIHandleMouse(root, event);
+        UIHandleMouse(root, event, renderer);
         break;
 
     default:

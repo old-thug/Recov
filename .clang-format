@@ -1,6 +1,8 @@
 
 Language: C
-IndentWidth: 4	
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
 DerivePointerAlignment: false
 PointerAlignment: Right
 AlwaysBreakAfterReturnType: AllDefinitions

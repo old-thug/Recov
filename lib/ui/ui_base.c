@@ -1,31 +1,75 @@
 #include "recov_gui/ui_base.h"
 #include "SDL3/SDL_events.h"
+#include "SDL3/SDL_rect.h"
+#include "SDL3/SDL_render.h"
 #include "SDL3/SDL_ttf.h"
+#include "recov_gui/ui_button.h"
+#include "recov_gui/ui_container.h"
 #include "recov_gui/ui_layout.h"
+#include "recov_gui/ui_rect.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 static TTF_Font *global_font = NULL;
 
-static void
-UIBaseOnMouseEnterdefault(UIBase *base)
-{}
+void
+UIBaseUpdate(UIBase *base, SDL_Renderer *renderer)
+{
+    UIColor bg = base->background;
+    UIRect rect = base->rect;
+    SDL_FRect frect = UIRectToFRect(rect);
 
-static void
-UIBaseOnMouseExitdefault(UIBase *base)
-{}
+    SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, bg.a);
+    SDL_RenderFillRect(renderer, &frect);
 
-static void
+    if (base->is_a_container)
+    {
+        UIContainerUpdateChildren((UIContainer *)base, renderer);
+    }
+    SDL_RenderPresent(renderer);
+}
+
+void
+UIBaseOnMouseEnterdefault(UIBase *base, SDL_Renderer* renderer)
+{
+    (void)base;
+    (void)renderer;    
+}
+
+void
+UIBaseOnFocusdefault(UIBase *base, SDL_Renderer* renderer)
+{
+    (void)base;
+    (void)renderer;    
+}
+
+void
+UIBaseOnMouseExitdefault(UIBase *base, SDL_Renderer* renderer)
+{
+    (void)base;
+    (void)renderer;
+}
+
+void
 UIBaseOnMouseDowndefault(UIBase *base, SDL_MouseButtonEvent *event)
-{}
+{
+    (void)base;
+    (void)event;
+}
 
-static void
+void
 UIBaseOnMouseUpdefault(UIBase *base, SDL_MouseButtonEvent *event)
-{}
+{
+    (void)base;
+    (void)event;
+}
 
-static void
-UIBaseOnMouseClickdefault(UIBase *base)
-{}
+void
+UIBaseOnMouseClickdefault(UIBase *base, SDL_Renderer* renderer)
+{
+    (void)base;    
+    (void)renderer;
+}
 
 bool
 UISetGlobalFont(const char *font_name, int font_size)
@@ -55,8 +99,8 @@ UIBaseInit(size_t size, UIRect rect, UIComponentType type, UIOnFocusFn on_focus,
     UIBase *base = malloc(size < sizeof(UIBase) ? sizeof(UIBase) : size);
     base->rect = rect;
     base->is_focused = false;
-    base->on_focus = on_focus;
-    base->on_update = on_update;
+    base->on_focus = on_focus ? on_focus : UIBaseOnFocusdefault;
+    base->on_update = on_update ? on_update : UIBaseUpdate;
     base->on_mouse_enter = UIBaseOnMouseEnterdefault;
     base->on_mouse_exit = UIBaseOnMouseExitdefault;
     base->on_mouse_down = UIBaseOnMouseDowndefault;
@@ -90,7 +134,7 @@ UISetUpdateFn(UIBase *base, UIUpdateFn fn)
 
 void
 UIBaseSetBackGround(UIBase *base, UIColor color)
-{
+{   
     base->background = color;
 }
 
@@ -101,24 +145,9 @@ UIBaseSetForeGround(UIBase *base, UIColor color)
 }
 
 void
-UIBaseSetLayout(UIBase *base, UILayout layout)
-{
-    base->layout = layout;
-}
-
-void
 UIBaseSetLayoutType(UIBase *base, UILayoutType type)
 {
-    base->layout.type = type;
-    switch (type)
-    {
-    case UI_LAYOUT_ABSOLUTE:
-        base->layout = UILayoutAbsoluteInit(base->rect.x, base->rect.y,
-                                            base->rect.w, base->rect.h);
-        break;
-    default:
-        break;
-    }
+    base->layout = type;
 }
 
 void
@@ -130,6 +159,7 @@ UIBaseSetOnClickCB(UIBase *base, UIOnMouseClickFn fn)
 void
 UIBaseSetOnMouseEnterCB(UIBase *base, UIOnMouseEnterFn fn)
 {
+    
     base->on_mouse_enter = fn;
 }
 
